@@ -51,6 +51,7 @@ PoissonPointProcess::~PoissonPointProcess()
 {
 
 }
+
 /*
  * Compute
  * So the PDF is f(t) = -L*exp(-Lt), and the 
@@ -80,3 +81,4 @@ void PoissonPointProcess::Compute(void)
                 ' ' << std::string(p.second/100, '*') << '\n';
     }
 }
+
