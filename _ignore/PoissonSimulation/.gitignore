@@ -1,0 +1,9 @@
+# Ignore everything in this directory
+*
+# Except this files
+!.gitignore
+!Makefile
+!poisson_simulation.cpp
+!poisson_simulation.hpp
+!poisson_simulation_prb.cpp
+!readme.txt

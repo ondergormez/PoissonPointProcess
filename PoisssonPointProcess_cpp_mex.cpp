@@ -43,13 +43,15 @@ using namespace std;
 //     PoissonPointProcess::Compute();
 // }
 
-// mexFunction
-void mexFunction
-(
-        int       nlhs ,
-        mxArray * plhs[] ,
-        int       nrhs ,
-  const mxArray * prhs[]
+/*
+ * mexFunction is the user-defined C routine that is called upon invocation
+ * of a MEX-function.
+ */
+void mexFunction(
+    int           nlhs,           /* number of expected outputs */
+    mxArray       *plhs[],        /* array of pointers to output arguments */
+    int           nrhs,           /* number of inputs */
+    const mxArray *prhs[]         /* array of pointers to input arguments */
 )
 {
 #ifndef NDEBUG
@@ -59,7 +61,17 @@ void mexFunction
     auto start = chrono::steady_clock::now();
 #endif
 
-    PoissonPointProcess::Compute();
+    if(nrhs == 1) {
+        int32_t lambda = static_cast<int32_t>(*mxGetPr(prhs[0])); 
+        
+#ifndef NDEBUG
+        cout << "Lambda: " << lambda << endl;
+#endif
+        PoissonPointProcess::Compute(lambda);
+    }
+    else {
+        mexErrMsgTxt("Expects 1 input arguments");
+    }
 
 #ifndef NDEBUG
     auto end = chrono::steady_clock::now();

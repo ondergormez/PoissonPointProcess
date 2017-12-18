@@ -26,6 +26,7 @@
  * Coder Created Header Files 
  */
 #include "PoissonPointProcess.hpp"
+#include "prng_uniform.hpp"
 
 /*
  * Using Declerations
@@ -57,28 +58,31 @@ PoissonPointProcess::~PoissonPointProcess()
  * So the PDF is f(t) = -L*exp(-Lt), and the 
  * CDF is F(t) = Prob(T < t) = 1 - exp(-Lt).
  */
-void PoissonPointProcess::Compute(void)
+void PoissonPointProcess::Compute(int32_t lambda)
 {
-	std::random_device rd;
+    std::random_device rd;
     std::mt19937 gen(rd());
  
     // if an event occurs 4 times a minute on average
     // how often is it that it occurs n times in one minute?
     std::poisson_distribution<> d(4);
-    int L = 100;
-    double cdf = 1 - exp(-L*4);
-        std::cout << "CDF value = " << cdf << '\n';
+    double cdf = 1 - exp(-lambda * 4);
+    cout << "CDF value = " << cdf << '\n';
         
-    double pdf = -L * exp(-L*4);
-        std::cout << "PDF value = " << pdf << '\n';
+    double pdf = -lambda * exp(-lambda * 4);
+    cout << "PDF value = " << pdf << '\n';
+
+#ifndef NDEBUG
+        cout << "d(gen) =  " << d(gen) << endl;
+#endif
      
     std::map<int, int> hist;
-    for(int n=0; n<10000; ++n) {
+    for(int n = 0; n < 10000; ++n) {
         ++hist[d(gen)];
     }
     for(auto p : hist) {
-        std::cout << p.first <<
-                ' ' << std::string(p.second/100, '*') << '\n';
+        std::cout << setw(2) << p.first <<
+                " --> " << setw(4) << p.second << ' ' << std::string(p.second/100, '*') << '\n';
     }
 }
 

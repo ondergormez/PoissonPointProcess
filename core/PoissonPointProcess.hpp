@@ -26,6 +26,11 @@
 * for compilation.
 */
 
+/*
+ * Standart Header Files
+ */
+#include <cstdint>
+
 /**
  * <p>
  *
@@ -45,7 +50,7 @@ private:
 public:
     PoissonPointProcess();
     ~PoissonPointProcess();
-    static void Compute(void);
+    static void Compute(int32_t lambda);
 };
 
 #endif /* __POISSON_POINT_PROCESS__HPP__ */
