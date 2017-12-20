@@ -69,16 +69,18 @@ void mexFunction(
     auto start = chrono::steady_clock::now();
 #endif
 
-    if(nrhs == 1) {
+    if(nrhs == 2) {
         if (nlhs == 1) {
 
-            int32_t lambda = static_cast<int32_t>(*mxGetPr(prhs[0])); 
+            double lambda = *mxGetPr(prhs[0]);
+            int seed = static_cast<int>(*mxGetPr(prhs[1]));
             
 #ifndef NDEBUG
-            cout << "Lambda: " << lambda << endl;
+            cout << "Lambda value from Matlab: " << lambda << endl;
+            cout << "Seed value from Matlab: " << seed << endl;
 #endif
 
-            list<list<pair<double, int>>> allPoissonDatas = Compute();
+            list<list<pair<double, int>>> allPoissonDatas = Compute(lambda, seed);
 
             list<pair<double, int>> poissonTimelineData = allPoissonDatas.front();
             allPoissonDatas.pop_front();
@@ -146,7 +148,9 @@ void mexFunction(
         }
     }
     else {
-        mexErrMsgTxt("Expects 1 input arguments");
+        mexErrMsgTxt("Expects 2 input arguments");
+        mexErrMsgTxt("Argument 1 must be lambda value!");
+        mexErrMsgTxt("Argument 2 must be seed value!");
     }
 
 #ifndef NDEBUG

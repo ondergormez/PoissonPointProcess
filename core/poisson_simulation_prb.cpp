@@ -12,12 +12,12 @@ using namespace std;
 #include "poisson_simulation_prb.hpp"
 
 //https://people.sc.fsu.edu/~jburkardt/cpp_src/poisson_simulation/poisson_simulation_prb.cpp
-list<list<pair<double, int>>> test01 ( );
-list<pair<double, int>> test02 ( );
+list<list<pair<double, int>>> test01 (double lambda, int seed);
+list<pair<double, int>> test02 (double lambda, int seed);
 
 //****************************************************************************80
 
-list<list<pair<double, int>>> Compute ()
+list<list<pair<double, int>>> Compute (double lambda,int seed)
 
 //****************************************************************************80
 //
@@ -42,7 +42,7 @@ list<list<pair<double, int>>> Compute ()
 //    John Burkardt
 //
 {
-  timestamp ( );
+  //timestamp ( );
   cout << "\n";
   cout << "POISSON_SIMULATION_TEST\n";
   cout << "  C++ version.\n";
@@ -50,11 +50,11 @@ list<list<pair<double, int>>> Compute ()
 
   list<list<pair<double, int>>> all;
 
-  list<list<pair<double, int>>> temp = test01 ( );
+  list<list<pair<double, int>>> temp = test01 (lambda, seed);
   for (auto it = temp.begin(); it != temp.end(); ++it) {
     all.push_back(*it);
   }
-  all.push_back(test02());
+  all.push_back(test02(lambda, seed));
 
 //
 //  Terminate.
@@ -63,13 +63,13 @@ list<list<pair<double, int>>> Compute ()
   cout << "POISSON_SIMULATION_TEST\n";
   cout << "  Normal end of execution.\n";
   cout << "\n";
-  timestamp ( );
+  //timestamp ( );
 
   return all;
 }
 //****************************************************************************80
 
-list<list<pair<double, int>>> test01 ( )
+list<list<pair<double, int>>> test01 (double lambda, int seed)
 
 //****************************************************************************80
 //
@@ -95,8 +95,6 @@ list<list<pair<double, int>>> test01 ( )
   int *f_bin;
   int i;
   int j;
-  double lambda;
-  int seed;
   double *t;
   double *w;
   double w_ave;
@@ -113,13 +111,11 @@ list<list<pair<double, int>>> test01 ( )
   cout << "  Simulate a Poisson process, for which, on average,\n";
   cout << "  LAMBDA events occur per unit time.\n";
   cout << "  Run until you have observed EVENT_NUM events.\n";
- 
-  lambda = 0.5;
-  seed = 123456789;
 
   cout << "\n";
   cout << "  LAMBDA = " << lambda << "\n";
   cout << "  EVENT_NUM = " << event_num << "\n";
+  cout << "  SEED = " << seed << "\n";
 
   t = new double[event_num+1];
   w = new double[event_num+1];
@@ -196,7 +192,7 @@ list<list<pair<double, int>>> test01 ( )
 }
 //****************************************************************************80
 
-list<pair<double, int>> test02 ( )
+list<pair<double, int>> test02 (double lambda, int seed)
 
 //****************************************************************************80
 //
@@ -220,21 +216,16 @@ list<pair<double, int>> test02 ( )
   int bin_num = 30;
   int *f_bin;
   int i;
-  double lambda;
   int *n;
   double *n_bin;
   double n_max;
   double n_mean;
   double n_min;
   double n_var;
-  int seed;
   double t;
   int test;
   int test_num = 20000;
-
-  lambda = 0.5;
   t = 1000.0;
-  seed = 123456789;
 
   cout << "\n";
   cout << "TEST02:\n";
@@ -246,6 +237,7 @@ list<pair<double, int>> test02 ( )
   cout << "  LAMBDA events occur per unit time.\n";
   cout << "  Run for a total of " << t << " time units.\n";
   cout << "  LAMBDA = " << lambda << "\n";
+  cout << "  SEED = " << seed << "\n";
 
   n = new int[test_num];
 
