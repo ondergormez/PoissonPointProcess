@@ -91,10 +91,6 @@ list<list<pair<double, int>>> test01 ( )
 //
 {
   int bin_num = 30;
-  string command_filename;
-  ofstream command;
-  string data_filename;
-  ofstream data;
   int event_num = 1000;
   int *f_bin;
   int i;
@@ -107,7 +103,6 @@ list<list<pair<double, int>>> test01 ( )
   double *w_bin;
   double w_max;
   double w_min;
-  double width;
   list<list<pair<double, int>>> temp;
 
   cout << "\n";
@@ -155,51 +150,18 @@ list<list<pair<double, int>>> test01 ( )
          << "  " << t[i]
          << "  " << w[i] << "\n";
   }
-//
-//  Create the data file.
-//
-  data_filename = "poisson_timeline_data.txt";
 
-  data.open ( data_filename.c_str ( ) );
   list<pair<double, int>> poissonTimelineData;
 
   for ( i = 0; i <= event_num; i++ )
   {
-    data << "  " << t[i]
-         << "  " << i << "\n";
     poissonTimelineData.push_back(make_pair(t[i], i));
   }
   temp.push_back(poissonTimelineData);
-  data.close ( );
 
-  cout << " \n";
-  cout << "  Data stored in \"" << data_filename << "\".\n";
-
-  command_filename = "poisson_timeline_commands.txt";
-
-  command.open ( command_filename.c_str ( ) );
-
-  command << "# poisson_timeline_commands.txt\n";
-  command << "#\n";
-  command << "# Usage:\n";
-  command << "#  gnuplot < poisson_timeline_commands.txt\n";
-  command << "#\n";
-  command << "set term png\n";
-  command << "set output 'poisson_timeline.png'\n";
-  command << "set style data lines\n";
-  command << "set xlabel 'Time'\n";
-  command << "set ylabel 'Number of Events'\n";
-  command << "set title 'Observation of Fixed Number of Poisson Events'\n";
-  command << "set grid\n";
-  command << "plot 'poisson_timeline_data.txt' using 1:2 lw 2\n";
-  command << "quit\n";
-
-  command.close ( );
-
-  cout << "  Plot commands stored in \"" << command_filename << "\".\n";
-//
-//  Determine bin information.
-//
+  //
+  //  Determine bin information.
+  //
   w_min = r8vec_min ( event_num + 1, w );
   w_max = r8vec_max ( event_num + 1, w );
 
@@ -217,51 +179,13 @@ list<list<pair<double, int>>> test01 ( )
     j = i4_min ( j, bin_num );
     f_bin[j] = f_bin[j] + 1;
   }
-//
-//  Create the data file.
-//
-  data_filename = "poisson_times_data.txt";
-
-  data.open ( data_filename.c_str ( ) );
   list<pair<double, int>> poissonTimesData;
 
   for ( i = 0; i < bin_num; i++ )
   {
-    data << "  " << w_bin[i]
-         << "  " << f_bin[i] << "\n";
     poissonTimesData.push_back(make_pair(w_bin[i], f_bin[i]));
   }
   temp.push_back(poissonTimesData);
-  data.close ( );
-
-  cout << " \n";
-  cout << "  Data stored in \"" << data_filename << "\".\n";
-//
-//  Create the command file.
-//
-  command_filename = "poisson_times_commands.txt";
-
-  command.open ( command_filename.c_str ( ) );
-
-  command << "# poisson_times_commands.txt\n";
-  command << "#\n";
-  command << "# Usage:\n";
-  command << "#  gnuplot < poisson_times_commands.txt\n";
-  command << "#\n";
-  command << "set term png\n";
-  command << "set output 'poisson_times.png'\n";
-  command << "set xlabel 'Waiting Time'\n";
-  command << "set ylabel 'Frequency'\n";
-  command << "set title 'Waiting Times Observed Over Fixed Time'\n";
-  command << "set grid\n";
-  command << "set style fill solid\n";
-  width = 0.85 * ( w_max - w_min ) / ( double ) ( bin_num );
-  command << "plot 'poisson_times_data.txt' using 1:2:(" << width << ") with boxes\n";
-  command << "quit\n";
-
-  command.close ( );
-
-  cout << "  Plot commands stored in \"" << command_filename << "\".\n";
 
   delete [] f_bin;
   delete [] t;

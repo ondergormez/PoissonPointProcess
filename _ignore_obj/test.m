@@ -21,3 +21,5 @@ xlabel('Number of Events')
 ylabel('Frequency')
 title('Number of Poisson Events Over Fixed Time')
 grid on
+
+pause
