@@ -23,7 +23,7 @@
 # include <ctime>
 # include <cstring>
 #include <chrono>
-#include <list>
+#include <vector>
 #include <utility>
 
 /*
@@ -79,18 +79,15 @@ void mexFunction(
             cout << "Lambda value from Matlab: " << lambda << endl;
             cout << "Seed value from Matlab: " << seed << endl;
 #endif
+            vector<pair<double, int>> poissonTimelineData;
+            vector<pair<double, int>> poissonTimesData;
+            vector<pair<double, int>> poissonEventsData;
+            
+            //get computational result to be returned to
+            //octave prompt with call by reference semantic
+            Compute(lambda, seed, poissonTimelineData, poissonTimesData, poissonEventsData);
 
-            list<list<pair<double, int>>> allPoissonDatas = Compute(lambda, seed);
-
-            list<pair<double, int>> poissonTimelineData = allPoissonDatas.front();
-            allPoissonDatas.pop_front();
-
-            list<pair<double, int>> poissonTimesData = allPoissonDatas.front();
-            allPoissonDatas.pop_front();
-
-            list<pair<double, int>> poissonEventsData = allPoissonDatas.front();
-
-            //prepare the output to be returned to matlab prompt
+            //prepare the output to be returned to octave prompt
             const char *field_names[] = {"timelineTime", "timelineNumOfEvents",
             "timesWaitingTime", "timesFrequency",
             "eventsNumOfEvents", "eventsFrequency"};

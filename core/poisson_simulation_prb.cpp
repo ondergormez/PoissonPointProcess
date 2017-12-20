@@ -12,12 +12,19 @@ using namespace std;
 #include "poisson_simulation_prb.hpp"
 
 //https://people.sc.fsu.edu/~jburkardt/cpp_src/poisson_simulation/poisson_simulation_prb.cpp
-list<list<pair<double, int>>> test01 (double lambda, int seed);
-list<pair<double, int>> test02 (double lambda, int seed);
+void test01(double lambda, int seed,
+  vector<pair<double, int>> &poissonTimelineData,
+  vector<pair<double, int>> &poissonTimesData);
+
+void test02 (double lambda, int seed,
+  vector<pair<double, int>> &poissonEventsData);
 
 //****************************************************************************80
 
-list<list<pair<double, int>>> Compute (double lambda,int seed)
+void Compute(double lambda,int seed,
+  vector<pair<double, int>> &poissonTimelineData,
+  vector<pair<double, int>> &poissonTimesData,
+  vector<pair<double, int>> &poissonEventsData)
 
 //****************************************************************************80
 //
@@ -48,28 +55,23 @@ list<list<pair<double, int>>> Compute (double lambda,int seed)
   cout << "  C++ version.\n";
   cout << "  Test the POISSON_SIMULATION library.\n";
 
-  list<list<pair<double, int>>> all;
+  test01 (lambda, seed, poissonTimelineData, poissonTimesData);
+  test02(lambda, seed, poissonEventsData);
 
-  list<list<pair<double, int>>> temp = test01 (lambda, seed);
-  for (auto it = temp.begin(); it != temp.end(); ++it) {
-    all.push_back(*it);
-  }
-  all.push_back(test02(lambda, seed));
-
-//
-//  Terminate.
-//
+  //
+  //  Terminate.
+  //
   cout << "\n";
   cout << "POISSON_SIMULATION_TEST\n";
   cout << "  Normal end of execution.\n";
   cout << "\n";
   //timestamp ( );
-
-  return all;
 }
 //****************************************************************************80
 
-list<list<pair<double, int>>> test01 (double lambda, int seed)
+void test01(double lambda, int seed,
+  vector<pair<double, int>>&poissonTimelineData,
+  vector<pair<double, int>>&poissonTimesData)
 
 //****************************************************************************80
 //
@@ -101,7 +103,6 @@ list<list<pair<double, int>>> test01 (double lambda, int seed)
   double *w_bin;
   double w_max;
   double w_min;
-  list<list<pair<double, int>>> temp;
 
   cout << "\n";
   cout << "TEST01:\n";
@@ -147,13 +148,10 @@ list<list<pair<double, int>>> test01 (double lambda, int seed)
          << "  " << w[i] << "\n";
   }
 
-  list<pair<double, int>> poissonTimelineData;
-
   for ( i = 0; i <= event_num; i++ )
   {
     poissonTimelineData.push_back(make_pair(t[i], i));
   }
-  temp.push_back(poissonTimelineData);
 
   //
   //  Determine bin information.
@@ -175,24 +173,20 @@ list<list<pair<double, int>>> test01 (double lambda, int seed)
     j = i4_min ( j, bin_num );
     f_bin[j] = f_bin[j] + 1;
   }
-  list<pair<double, int>> poissonTimesData;
 
   for ( i = 0; i < bin_num; i++ )
   {
     poissonTimesData.push_back(make_pair(w_bin[i], f_bin[i]));
   }
-  temp.push_back(poissonTimesData);
 
   delete [] f_bin;
   delete [] t;
   delete [] w;
   delete [] w_bin;
-
-  return temp;
 }
 //****************************************************************************80
 
-list<pair<double, int>> test02 (double lambda, int seed)
+void test02(double lambda, int seed, vector<pair<double, int>> &poissonEventsData)
 
 //****************************************************************************80
 //
@@ -271,11 +265,9 @@ list<pair<double, int>> test02 (double lambda, int seed)
     f_bin[i] = f_bin[i] + 1;
   }
 
-//
-//  Fill pair list with results.
-//
-  list<pair<double, int>> poissonEventsData;
-
+  //
+  //  Fill pair list with results.
+  //
   for ( i = 0; i < bin_num; i++ )
   {
     poissonEventsData.push_back(make_pair(n_bin[i], f_bin[i]));
@@ -284,6 +276,4 @@ list<pair<double, int>> test02 (double lambda, int seed)
   delete [] f_bin;
   delete [] n;
   delete [] n_bin;
-
-  return poissonEventsData;
 }

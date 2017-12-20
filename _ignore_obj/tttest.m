@@ -1,6 +1,6 @@
-lambdax = 0.7;
-seedx = 123459;
-myStruct = PoisssonPointProcess_cpp_mex(lambdax, seedx)
+lambda = 0.5;
+seed = 123456789;
+myStruct = PoisssonPointProcess_cpp_mex(lambda, seed)
 
 figure
 plot([myStruct.timelineTime], [myStruct.timelineNumOfEvents], 'LineWidth', 1.5)

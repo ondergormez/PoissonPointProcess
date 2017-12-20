@@ -1,3 +1,6 @@
-#include <list>
+#include <vector>
 #include <utility>
-std::list<std::list<std::pair<double, int>>> Compute (double lambda, int seed);
+void Compute (double lambda, int seed,
+	std::vector<std::pair<double, int>> &poissonTimelineData,
+	std::vector<std::pair<double, int>> &poissonTimesData,
+	std::vector<std::pair<double, int>> &poissonEventsData);
