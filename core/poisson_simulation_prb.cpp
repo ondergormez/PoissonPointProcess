@@ -9,16 +9,15 @@
 using namespace std;
 
 # include "poisson_simulation.hpp"
+#include "poisson_simulation_prb.hpp"
 
 //https://people.sc.fsu.edu/~jburkardt/cpp_src/poisson_simulation/poisson_simulation_prb.cpp
-
-int main ( );
-void test01 ( );
-void test02 ( );
+list<list<pair<double, int>>> test01 ( );
+list<pair<double, int>> test02 ( );
 
 //****************************************************************************80
 
-int main ( )
+list<list<pair<double, int>>> Compute ()
 
 //****************************************************************************80
 //
@@ -49,8 +48,14 @@ int main ( )
   cout << "  C++ version.\n";
   cout << "  Test the POISSON_SIMULATION library.\n";
 
-  test01 ( );
-  test02 ( );
+  list<list<pair<double, int>>> all;
+
+  list<list<pair<double, int>>> temp = test01 ( );
+  for (auto it = temp.begin(); it != temp.end(); ++it) {
+    all.push_back(*it);
+  }
+  all.push_back(test02());
+
 //
 //  Terminate.
 //
@@ -60,11 +65,11 @@ int main ( )
   cout << "\n";
   timestamp ( );
 
-  return 0;
+  return all;
 }
 //****************************************************************************80
 
-void test01 ( )
+list<list<pair<double, int>>> test01 ( )
 
 //****************************************************************************80
 //
@@ -103,6 +108,7 @@ void test01 ( )
   double w_max;
   double w_min;
   double width;
+  list<list<pair<double, int>>> temp;
 
   cout << "\n";
   cout << "TEST01:\n";
@@ -155,19 +161,20 @@ void test01 ( )
   data_filename = "poisson_timeline_data.txt";
 
   data.open ( data_filename.c_str ( ) );
+  list<pair<double, int>> poissonTimelineData;
 
   for ( i = 0; i <= event_num; i++ )
   {
     data << "  " << t[i]
          << "  " << i << "\n";
+    poissonTimelineData.push_back(make_pair(t[i], i));
   }
+  temp.push_back(poissonTimelineData);
   data.close ( );
 
   cout << " \n";
   cout << "  Data stored in \"" << data_filename << "\".\n";
-//
-//  Create the command file.
-//
+
   command_filename = "poisson_timeline_commands.txt";
 
   command.open ( command_filename.c_str ( ) );
@@ -216,12 +223,15 @@ void test01 ( )
   data_filename = "poisson_times_data.txt";
 
   data.open ( data_filename.c_str ( ) );
+  list<pair<double, int>> poissonTimesData;
 
   for ( i = 0; i < bin_num; i++ )
   {
     data << "  " << w_bin[i]
          << "  " << f_bin[i] << "\n";
+    poissonTimesData.push_back(make_pair(w_bin[i], f_bin[i]));
   }
+  temp.push_back(poissonTimesData);
   data.close ( );
 
   cout << " \n";
@@ -258,11 +268,11 @@ void test01 ( )
   delete [] w;
   delete [] w_bin;
 
-  return;
+  return temp;
 }
 //****************************************************************************80
 
-void test02 ( )
+list<pair<double, int>> test02 ( )
 
 //****************************************************************************80
 //
@@ -284,10 +294,6 @@ void test02 ( )
 //
 {
   int bin_num = 30;
-  string command_filename;
-  ofstream command;
-  string data_filename;
-  ofstream data;
   int *f_bin;
   int i;
   double lambda;
@@ -301,7 +307,6 @@ void test02 ( )
   double t;
   int test;
   int test_num = 20000;
-  double w;
 
   lambda = 0.5;
   t = 1000.0;
@@ -349,52 +354,20 @@ void test02 ( )
     i = i4_min ( i, bin_num );
     f_bin[i] = f_bin[i] + 1;
   }
-//
-//  Create the data file.
-//
-  data_filename = "poisson_events_data.txt";
 
-  data.open ( data_filename.c_str ( ) );
+//
+//  Fill pair list with results.
+//
+  list<pair<double, int>> poissonEventsData;
 
   for ( i = 0; i < bin_num; i++ )
   {
-    data << "  " << n_bin[i]
-         << "  " << f_bin[i] << "\n";
+    poissonEventsData.push_back(make_pair(n_bin[i], f_bin[i]));
   }
-  data.close ( );
-
-  cout << " \n";
-  cout << "  Data stored in \"" << data_filename << "\".\n";
-//
-//  Create the command file.
-//
-  command_filename = "poisson_events_commands.txt";
-
-  command.open ( command_filename.c_str ( ) );
-
-  command << "# poisson_events_commands.txt\n";
-  command << "#\n";
-  command << "# Usage:\n";
-  command << "#  gnuplot < poisson_events_commands.txt\n";
-  command << "#\n";
-  command << "set term png\n";
-  command << "set output 'poisson_events.png'\n";
-  command << "set xlabel 'Number of Events'\n";
-  command << "set ylabel 'Frequency'\n";
-  command << "set title 'Number of Poisson Events Over Fixed Time'\n";
-  command << "set grid\n";
-  command << "set style fill solid\n";
-  w = 0.85 * ( n_max - n_min ) / ( double ) ( bin_num );
-  command << "plot 'poisson_events_data.txt' using 1:2:(" << w << ") with boxes\n";
-  command << "quit\n";
-
-  command.close ( );
-
-  cout << "  Plot commands stored in \"" << command_filename << "\".\n";
 
   delete [] f_bin;
   delete [] n;
   delete [] n_bin;
 
-  return;
+  return poissonEventsData;
 }

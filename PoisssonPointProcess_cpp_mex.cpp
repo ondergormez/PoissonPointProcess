@@ -30,12 +30,12 @@
  * Coder Created Header Files 
  */
 #include "PoissonPointProcess.hpp"
-#include "poisson_simulation.hpp"
 
 /*
  * Third Party Header Files 
  */
 #include "mex.h"
+#include "poisson_simulation_prb.hpp"
 
 /*
  * Using Declerations
@@ -46,10 +46,6 @@ using namespace std;
  * Global Defitions
  */
 //This section was taken to the link below
-//https://people.sc.fsu.edu/~jburkardt/cpp_src/poisson_simulation/poisson_simulation_prb.cpp
-void Compute(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
-void test01(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
-list<pair<double, int>> test02(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 
 // int main()
 // {
@@ -94,11 +90,18 @@ void mexFunction(
 
             //plhs[0] = Compute(nlhs, plhs, nrhs, prhs);
 
-            list<pair<double, int>> poissonEventsData = test02(nlhs, plhs, nrhs, prhs);
+            list<list<pair<double, int>>> allPoissonDatas = Compute();
 
+            list<pair<double, int>> poissonTimelineData = allPoissonDatas.front();
+            allPoissonDatas.pop_front();
+
+            list<pair<double, int>> poissonTimesData = allPoissonDatas.front();
+            allPoissonDatas.pop_front();
+
+            list<pair<double, int>> poissonEventsData = allPoissonDatas.front();
 
             //prepare the output to be returned to matlab prompt
-            const char *field_names[] = {"number", "value"};
+            const char *field_names[] = {"timelineTime", "timelineNumOfEvents", "timesWaitingTime", "timesFrequency", "eventsNumOfEvents", "eventsFrequency"};
 
             mwSize dims[2] = {1, static_cast<int>(poissonEventsData.size())};
 
@@ -106,10 +109,10 @@ void mexFunction(
 
             mxArray *value;
 
-            plhs[0] = mxCreateStructArray(2, dims, 4, field_names);
+            plhs[0] = mxCreateStructArray(2, dims, 6, field_names);
 
-            field_number = mxGetFieldNumber(plhs[0], "number");
-            field_value = mxGetFieldNumber(plhs[0], "value");
+            field_number = mxGetFieldNumber(plhs[0], "eventsNumOfEvents");
+            field_value = mxGetFieldNumber(plhs[0], "eventsFrequency");
 
             unsigned int cnt = 0;
 
@@ -122,15 +125,7 @@ void mexFunction(
             }
 
   
-  // list<pair<double, int>> poissonEventsData;
 
-  // for ( i = 0; i < bin_num; i++ )
-  // {
-  //   data << "  " << n_bin[i]
-  //        << "  " << f_bin[i] << "\n";
-  //   poissonEventsData.push_back(make_pair(n_bin[i], f_bin[i]));
-  // }  
-//return poissonEventsData;
 //list<pair<double, int>> test02(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
             //cout << "Exited from function" << endl;
