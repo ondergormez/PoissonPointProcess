@@ -102,25 +102,52 @@ void mexFunction(
 
             //prepare the output to be returned to matlab prompt
             const char *field_names[] = {"timelineTime", "timelineNumOfEvents", "timesWaitingTime", "timesFrequency", "eventsNumOfEvents", "eventsFrequency"};
+            
+            unsigned int maxSize = 0;
+            if(poissonTimelineData.size() > poissonTimesData.size()) {
+                maxSize = poissonTimelineData.size();
+            }
+            else {
+                maxSize = poissonTimesData.size();
+            }
 
-            mwSize dims[2] = {1, static_cast<int>(poissonEventsData.size())};
+            if(poissonEventsData.size() > maxSize) {
+                maxSize = poissonEventsData.size();
+            }
 
-            int field_number, field_value;
+            mwSize dims[2] = {1, static_cast<int>(maxSize)};
 
             mxArray *value;
-
             plhs[0] = mxCreateStructArray(2, dims, 6, field_names);
-
-            field_number = mxGetFieldNumber(plhs[0], "eventsNumOfEvents");
-            field_value = mxGetFieldNumber(plhs[0], "eventsFrequency");
+            int field_timelineTime = mxGetFieldNumber(plhs[0], "timelineTime");
+            int field_timelineNumOfEvents = mxGetFieldNumber(plhs[0], "timelineNumOfEvents");
+            int field_timesWaitingTime = mxGetFieldNumber(plhs[0], "timesWaitingTime");
+            int field_timesFrequency = mxGetFieldNumber(plhs[0], "timesFrequency");
+            int field_eventsNumOfEvents = mxGetFieldNumber(plhs[0], "eventsNumOfEvents");
+            int field_eventsFrequency = mxGetFieldNumber(plhs[0], "eventsFrequency");
 
             unsigned int cnt = 0;
-
+            for (auto i = poissonTimelineData.begin(); i != poissonTimelineData.end(); ++i) {
+                value = mxCreateDoubleScalar((*i).first);
+                mxSetFieldByNumber(plhs[0], cnt, field_timelineTime, value);
+                value = mxCreateDoubleScalar((*i).second);
+                mxSetFieldByNumber(plhs[0], cnt, field_timelineNumOfEvents, value);
+                cnt++;
+            }
+            cnt = 0;
+            for (auto i = poissonTimesData.begin(); i != poissonTimesData.end(); ++i) {
+                value = mxCreateDoubleScalar((*i).first);
+                mxSetFieldByNumber(plhs[0], cnt, field_timesWaitingTime, value);
+                value = mxCreateDoubleScalar((*i).second);
+                mxSetFieldByNumber(plhs[0], cnt, field_timesFrequency, value);
+                cnt++;
+            }
+            cnt = 0;
             for (auto i = poissonEventsData.begin(); i != poissonEventsData.end(); ++i) {
                 value = mxCreateDoubleScalar((*i).first);
-                mxSetFieldByNumber(plhs[0], cnt, field_number, value);
+                mxSetFieldByNumber(plhs[0], cnt, field_eventsNumOfEvents, value);
                 value = mxCreateDoubleScalar((*i).second);
-                mxSetFieldByNumber(plhs[0], cnt, field_value, value);
+                mxSetFieldByNumber(plhs[0], cnt, field_eventsFrequency, value);
                 cnt++;
             }
 
